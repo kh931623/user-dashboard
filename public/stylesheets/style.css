@@ -22,3 +22,14 @@ form>* {
 .mt-3 {
   margin-top: 0.75rem;
 }
+
+.message {
+  display: none;
+  color: red;
+  padding: 0.75rem;
+}
+
+.message p:before {
+  margin-right: 0.5rem;
+  content: "✖";
+}

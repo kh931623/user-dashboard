@@ -16,18 +16,29 @@
     <form id="signupForm">
       <div>
         <label for="email">Email</label>
-        <input type="text" name="email" id="email">
+        <input type="text" name="email" id="email" required>
       </div>
       <div>
         <label for="password">Password</label>
-        <input type="password" name="password" id="password">
+        <input type="password" name="password" id="password" required>
+      </div>
+      <div class="message" id="password-error">
+        <h3>Password must contain the following:</h3>
+        <p id="lowercase" class="invalid">A <b>lowercase</b> letter</p>
+        <p id="uppercase" class="invalid">A <b>capital (uppercase)</b> letter</p>
+        <p id="digit" class="invalid">A <b>number</b></p>
+        <p id="length" class="invalid">Minimum <b>8 characters</b></p>
+        <p id="special">A special character: #?!@$%^&*-</p>
       </div>
       <div>
         <label for="passwordConfirm">Password Confirm</label>
-        <input type="password" name="passwordConfirm" id="passwordConfirm">
+        <input type="password" name="passwordConfirm" id="passwordConfirm" required>
+      </div>
+      <div class="message" id="password-confirm-error">
+        <p>This must have the same value as password</p>
       </div>
       <div>
-        <input type="submit" value="Sign up">
+        <input type="submit" value="Sign up" id="submit">
       </div>
     </form>
 
@@ -42,9 +53,94 @@
     const password = document.getElementById('password')
     const passwordConfirm = document.getElementById('passwordConfirm')
     const signupForm = document.getElementById('signupForm')
+    const submit = document.getElementById('submit')
+    const passwordConfirmError = document.getElementById('password-confirm-error')
+    const passwordError = document.getElementById('password-error')
+
+    let isValid = false
+
+    const validatePasswordConfirm = () => {
+      const bad = password.value !== passwordConfirm.value
+
+      if (bad) passwordConfirmError.style.display = 'block'
+      else passwordConfirmError.style.display = 'none'
+
+      return !bad
+    }
+
+    const hidePasswordError = () => {
+      document.querySelectorAll('#password-error > *').forEach((node) => {
+        node.style.display = 'none'
+      })
+
+      passwordError.style.display = 'none'
+    }
+
+    const validatePassword = () => {
+      let errors = []
+
+      hidePasswordError()
+
+      if (password.value < 8) {
+        errors.push('length')
+      }
+
+      if (!password.value.match(/[a-z]/g)) {
+        errors.push('lowercase')
+      }
+
+      if (!password.value.match(/[A-Z]/g)) {
+        errors.push('uppercase')
+      }
+
+      if (!password.value.match(/[0-9]/g)) {
+        errors.push('digit')
+      }
+
+      if (!password.value.match(/[#?!@$%^&*-]/g)) {
+        errors.push('special')
+      }
+
+      if (errors.length) {
+        passwordError.style.display = 'block'
+
+        errors.forEach((id) => {
+          document.getElementById(id).style.display = 'block'
+        })
+      }
+
+      return !errors.length
+    }
+
+    const validate = () => {
+      const validConfrim = validatePasswordConfirm()
+      const validPassword = validatePassword()
+
+      console.log(validConfrim, validPassword);
+
+      if (validConfrim && validPassword) {
+        isValid = true
+        submit.disabled = false
+      } else {
+        isValid = false
+        submit.disabled = true
+      }
+    }
+
+    password.addEventListener('keyup', () => {
+      validate()
+    })
+
+    passwordConfirm.addEventListener('keyup', () => {
+      validate()
+    })
 
     signupForm.addEventListener('submit', async (event) => {
       event.preventDefault()
+      validate()
+
+      if (!isValid) return
+
       const formData = new FormData(signupForm)
       const payload = {}
 
