@@ -25,6 +25,7 @@ router.post('/signup', (req, res) => {
     passwordConfirm,
   } = req.body
 
+  res.cookie('test', 'hehehe')
   res.json({
     email,
     password,

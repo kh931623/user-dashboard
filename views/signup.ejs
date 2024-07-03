@@ -6,11 +6,14 @@
     <%= title %>
   </title>
   <link rel='stylesheet' href='/stylesheets/style.css' />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js"
+    integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 
 <body>
   <div>
-    <form action="/users/signup" method="post">
+    <form id="signupForm">
       <div>
         <label for="email">Email</label>
         <input type="text" name="email" id="email">
@@ -35,7 +38,23 @@
   </div>
 
   <script>
+    const email = document.getElementById('email')
+    const password = document.getElementById('password')
+    const passwordConfirm = document.getElementById('passwordConfirm')
+    const signupForm = document.getElementById('signupForm')
 
+    signupForm.addEventListener('submit', async (event) => {
+      event.preventDefault()
+      const formData = new FormData(signupForm)
+      const payload = {}
+
+      for (const [key, val] of formData.entries()) {
+        payload[key] = val
+      }
+
+      const res = await axios.post('/users/signup', payload)
+      console.log(res);
+    })
   </script>
 </body>
 
