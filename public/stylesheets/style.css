@@ -6,3 +6,19 @@ body {
 a {
   color: #00B7FF;
 }
+
+label {
+  display: block;
+}
+
+input {
+  display: block;
+}
+
+form>* {
+  margin-top: 0.75rem;
+}
+
+.mt-3 {
+  margin-top: 0.75rem;
+}
