@@ -80,9 +80,21 @@ const resetPassword = async (email, oldPassword, password, passwordConfirm) => {
   return updatedUser
 }
 
+const verifyUser = (email) => {
+  return prismaClient.user.update({
+    where: {
+      email,
+    },
+    data: {
+      verified: true
+    }
+  })
+}
+
 module.exports = {
   register,
   login,
   updateName,
   resetPassword,
+  verifyUser,
 }

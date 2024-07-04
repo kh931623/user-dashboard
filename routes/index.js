@@ -1,6 +1,9 @@
 var express = require('express');
 var router = express.Router();
 
+const verificationService = require('../services/verification')
+const userService = require('../services/user')
+
 const authMiddleware = require('../middlewares/auth')
 
 /* GET home page. */
@@ -26,6 +29,20 @@ router.get('/login', (req, res) => {
 
 router.get('/signup', (req, res) => {
   res.render('signup', { title: 'Sign Up' })
+})
+
+router.get('/verify', async (req, res) => {
+  const { token } = req.query
+
+  try {
+    const email = await verificationService.parseToken(token)
+
+    await userService.verifyUser(email)
+
+    res.redirect('/')
+  } catch (error) {
+    res.status(400).send('Invalid verification link!')
+  }
 })
 
 module.exports = router;

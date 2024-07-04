@@ -3,6 +3,7 @@ var router = express.Router();
 
 const userService = require('../services/user')
 const sessionService = require('../services/session')
+const verificationService = require('../services/verification')
 const maskUser = require('../utils/mask-user')
 const prismaClient = require('../prisma')
 
@@ -38,6 +39,7 @@ router.post('/signup', async (req, res) => {
 
   try {
     const user = await userService.register(email, password, passwordConfirm)
+    await verificationService.sendVerificationEmail(user.email)
     req.session.user = user
     res.json(maskUser(user))
   } catch (error) {
