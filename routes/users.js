@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
-const R = require('ramda')
 
 const userService = require('../services/user')
 const maskUser = require('../utils/mask-user')
+const prismaClient = require('../prisma')
 
 const apiAuthMiddleware = require('../middlewares/api-auth')
 
@@ -79,7 +79,7 @@ router.post('/reset-password', apiAuthMiddleware, async (req, res) => {
   }
 })
 
-router.post('/logout', async (req, res) => {
+router.post('/logout', apiAuthMiddleware, async (req, res) => {
   req.session.destroy((err) => {
     if (err) {
       return res.status(400).send(err.message)
@@ -87,6 +87,23 @@ router.post('/logout', async (req, res) => {
 
     res.status(200).end()
   })
+})
+
+router.get('/dashboard', apiAuthMiddleware, async (req, res) => {
+  try {
+    const users = await prismaClient.user.findMany({
+      select: {
+        email: true,
+        login_count: true,
+        last_session_at: true,
+      }
+    })
+
+    res.json(users)
+  } catch (error) {
+    console.error(error);
+    res.status(400).send(error.message)
+  }
 })
 
 module.exports = router;

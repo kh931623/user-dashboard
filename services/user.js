@@ -29,6 +29,16 @@ const login = async (email, password) => {
 
   if (!valid) throw new Error('Wrong Credentials')
 
+  await prismaClient.user.update({
+    where: {
+      email,
+    },
+    data: {
+      login_count: user.login_count + 1,
+      last_session_at: new Date()
+    }
+  })
+
   return user
 }
 

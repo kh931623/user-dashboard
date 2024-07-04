@@ -14,6 +14,12 @@ router.get('/profile', authMiddleware, (req, res) => {
   })
 })
 
+router.get('/dashboard', authMiddleware, (req, res) => {
+  res.render('dashboard', {
+    title: 'Dashboard'
+  })
+})
+
 router.get('/login', (req, res) => {
   res.render('login', { title: 'Sign In' });
 })

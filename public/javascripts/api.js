@@ -35,3 +35,7 @@ const login = handleErrorDecorator(async (payload) => {
 const signup = handleErrorDecorator(async (payload) => {
   return axios.post('/users/signup', payload)
 })
+
+const getDashboard = handleErrorDecorator(async () => {
+  return axios.get('/users/dashboard').then(res => res.data)
+})

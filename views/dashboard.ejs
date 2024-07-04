@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>
+    <%= title %>
+  </title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js"
+    integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="/javascripts/api.js"></script>
+</head>
+
+<body>
+  <h2>Dashboard</h2>
+  <div class="flex">
+    <div class="flex justify-start">
+      <a href="/profile">Profile</a>
+    </div>
+    <div class="flex justify-end">
+      <button id="logout">
+        Log out
+      </button>
+    </div>
+  </div>
+
+  <table class="full-w border mt-3">
+    <thead>
+      <tr>
+        <th>
+          Email
+        </th>
+        <th>
+          Login Count
+        </th>
+        <th>
+          Last Session At
+        </th>
+      </tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+  </table>
+
+  <script>
+    document.getElementById('logout').addEventListener('click', async () => {
+      await logout()
+      window.location.pathname = '/'
+    })
+
+    window.onload = async () => {
+      const users = await getDashboard()
+      console.log(users);
+
+      const rows = users.map((user) => {
+        const tr = document.createElement('tr')
+
+        const email = document.createElement('td')
+        const count = document.createElement('td')
+        const lastSession = document.createElement('td')
+
+        email.innerText = user.email
+        count.innerText = user.login_count
+        lastSession.innerText = user.last_session_at
+
+        tr.append(email, count, lastSession)
+
+        return tr
+      })
+
+      document.getElementById('table-body').append(...rows)
+    }
+  </script>
+</body>
+
+</html>
