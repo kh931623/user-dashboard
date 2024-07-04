@@ -9,6 +9,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js"
     integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="/javascripts/password-validation.js"></script>
 </head>
 
 <body>
@@ -59,64 +60,16 @@
 
     let isValid = false
 
-    const validatePasswordConfirm = () => {
-      const bad = password.value !== passwordConfirm.value
-
-      if (bad) passwordConfirmError.style.display = 'block'
-      else passwordConfirmError.style.display = 'none'
-
-      return !bad
-    }
-
-    const hidePasswordError = () => {
-      document.querySelectorAll('#password-error > *').forEach((node) => {
-        node.style.display = 'none'
-      })
-
-      passwordError.style.display = 'none'
-    }
-
-    const validatePassword = () => {
-      let errors = []
-
-      hidePasswordError()
-
-      if (password.value < 8) {
-        errors.push('length')
-      }
-
-      if (!password.value.match(/[a-z]/g)) {
-        errors.push('lowercase')
-      }
-
-      if (!password.value.match(/[A-Z]/g)) {
-        errors.push('uppercase')
-      }
-
-      if (!password.value.match(/[0-9]/g)) {
-        errors.push('digit')
-      }
-
-      if (!password.value.match(/[#?!@$%^&*-]/g)) {
-        errors.push('special')
-      }
-
-      if (errors.length) {
-        passwordError.style.display = 'block'
-
-        errors.forEach((id) => {
-          document.getElementById(id).style.display = 'block'
-        })
-      }
-
-      return !errors.length
-    }
-
     const validate = () => {
-      const validConfrim = validatePasswordConfirm()
-      const validPassword = validatePassword()
+      hidePasswordError(passwordError)
 
-      if (validConfrim && validPassword) {
+      const validConfrim = validatePasswordConfirm(password.value, passwordConfirm.value)
+      const errors = validatePassword(password.value)
+
+      togglePasswordConfirmError(validConfrim, passwordConfirmError)
+      showPasswordError(errors, passwordError)
+
+      if (validConfrim && !errors.length) {
         isValid = true
         submit.disabled = false
       } else {
