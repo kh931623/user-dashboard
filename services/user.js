@@ -32,7 +32,21 @@ const login = async (email, password) => {
   return user
 }
 
+const updateName = async (user, name) => {
+  const res = await prismaClient.user.update({
+    where: {
+      email: user.email
+    },
+    data: {
+      name
+    }
+  })
+
+  return res
+}
+
 module.exports = {
   register,
   login,
+  updateName,
 }

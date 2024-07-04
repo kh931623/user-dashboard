@@ -9,8 +9,8 @@ router.get('/', authMiddleware, function (req, res, next) {
 });
 
 router.get('/profile', authMiddleware, (req, res) => {
-  res.json({
-    msg: 'Profile la'
+  res.render('profile', {
+    title: 'Profile'
   })
 })
 

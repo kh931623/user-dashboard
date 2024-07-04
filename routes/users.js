@@ -5,6 +5,8 @@ const R = require('ramda')
 const userService = require('../services/user')
 const maskUser = require('../utils/mask-user')
 
+const apiAuthMiddleware = require('../middlewares/api-auth')
+
 /* GET users listing. */
 router.get('/', function (req, res, next) {
   res.send('respond with a resource');
@@ -45,6 +47,17 @@ router.post('/signup', async (req, res) => {
       message: "Failed to sign up"
     })
   }
+})
+
+router.get('/profile', apiAuthMiddleware, async (req, res) => {
+  res.json(maskUser(req.session.user))
+})
+
+router.post('/', apiAuthMiddleware, async (req, res) => {
+  const user = await userService.updateName(req.session.user, req.body.name)
+
+  req.session.user = user
+  res.json(maskUser(user))
 })
 
 module.exports = router;

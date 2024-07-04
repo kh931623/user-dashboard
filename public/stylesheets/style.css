@@ -11,6 +11,10 @@ label {
   display: block;
 }
 
+form {
+  padding: 0.75rem;
+}
+
 input {
   display: block;
 }
@@ -21,6 +25,10 @@ form>* {
 
 .mt-3 {
   margin-top: 0.75rem;
+}
+
+.border {
+  border: 1px solid black;
 }
 
 .message {
