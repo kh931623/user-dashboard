@@ -6,18 +6,21 @@
     <%= title %>
   </title>
   <link rel='stylesheet' href='/stylesheets/style.css' />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js"
+    integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 
 <body>
   <div>
-    <form action="/users/login" method="post">
+    <form id="loginForm">
       <div>
         <label for="email">Email</label>
-        <input type="text" name="email" id="email">
+        <input type="text" name="email" id="email" required>
       </div>
       <div>
         <label for="password">Password</label>
-        <input type="password" name="password" id="password">
+        <input type="password" name="password" id="password" required>
       </div>
       <div>
         <input type="submit" value="Sign in">
@@ -29,6 +32,24 @@
       <a href="/signup">Sign up</a>
     </div>
   </div>
+
+  <script>
+    const loginForm = document.getElementById('loginForm')
+
+    loginForm.addEventListener('submit', async (event) => {
+      event.preventDefault()
+
+      const formData = new FormData(loginForm)
+      const payload = {}
+
+      for (const [key, val] of formData.entries()) {
+        payload[key] = val
+      }
+
+      const res = await axios.post('/users/login', payload)
+      window.location.pathname = '/'
+    })
+  </script>
 </body>
 
 </html>
