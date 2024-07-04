@@ -101,6 +101,7 @@ router.get('/dashboard', apiAuthMiddleware, async (req, res) => {
         email: true,
         login_count: true,
         last_session_at: true,
+        created_at: true,
       }
     })
 

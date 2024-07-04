@@ -49,6 +49,9 @@
           Email
         </th>
         <th>
+          Sign Up Timestamp
+        </th>
+        <th>
           Login Count
         </th>
         <th>
@@ -71,20 +74,21 @@
         NumberOfActiveUsersToday,
         averageUsersWithin7Days,
       } = await getDashboard()
-      console.log(users);
 
       const rows = users.map((user) => {
         const tr = document.createElement('tr')
 
         const email = document.createElement('td')
+        const signupTime = document.createElement('td')
         const count = document.createElement('td')
         const lastSession = document.createElement('td')
 
         email.innerText = user.email
+        signupTime.innerText = user.created_at
         count.innerText = user.login_count
         lastSession.innerText = user.last_session_at
 
-        tr.append(email, count, lastSession)
+        tr.append(email, signupTime, count, lastSession)
 
         return tr
       })
