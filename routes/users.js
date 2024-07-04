@@ -18,15 +18,13 @@ router.post('/login', async (req, res) => {
     password
   } = req.body
 
-  const user = await userService.login(email, password)
-
-  if (user) {
+  try {
+    const user = await userService.login(email, password)
     req.session.user = user
     res.json(maskUser(user))
-  } else {
-    res.status(400).json({
-      message: "Failed to login"
-    })
+  } catch (error) {
+    console.error(error);
+    res.status(400).send(error.message)
   }
 })
 
@@ -37,15 +35,13 @@ router.post('/signup', async (req, res) => {
     passwordConfirm,
   } = req.body
 
-  const user = await userService.register(email, password, passwordConfirm)
-
-  if (user) {
+  try {
+    const user = await userService.register(email, password, passwordConfirm)
     req.session.user = user
     res.json(maskUser(user))
-  } else {
-    res.status(400).json({
-      message: "Failed to sign up"
-    })
+  } catch (error) {
+    console.error(error);
+    res.status(400).send(error.message)
   }
 })
 
@@ -53,11 +49,44 @@ router.get('/profile', apiAuthMiddleware, async (req, res) => {
   res.json(maskUser(req.session.user))
 })
 
-router.post('/', apiAuthMiddleware, async (req, res) => {
-  const user = await userService.updateName(req.session.user, req.body.name)
+router.patch('/', apiAuthMiddleware, async (req, res) => {
+  try {
+    const user = await userService.updateName(req.session.user, req.body.name)
 
-  req.session.user = user
-  res.json(maskUser(user))
+    req.session.user = user
+    res.json(maskUser(user))
+  } catch (error) {
+    console.error(error);
+    res.status(400).send(error.message)
+  }
+})
+
+router.post('/reset-password', apiAuthMiddleware, async (req, res) => {
+  const {
+    oldPassword,
+    password,
+    passwordConfirm,
+  } = req.body
+
+  try {
+    const user = await userService.resetPassword(req.session.user.email, oldPassword, password, passwordConfirm)
+
+    req.session.user = user
+    res.json(maskUser(user))
+  } catch (error) {
+    console.error(error);
+    res.status(400).send(error.message)
+  }
+})
+
+router.post('/logout', async (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(400).send(err.message)
+    }
+
+    res.status(200).end()
+  })
 })
 
 module.exports = router;

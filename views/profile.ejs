@@ -22,7 +22,7 @@
       <a href="/Dashboard">Dashboard</a>
     </div>
     <div class="flex justify-end">
-      <button>
+      <button id="logout">
         Log out
       </button>
     </div>
@@ -82,6 +82,11 @@
     const passwordConfirmError = document.getElementById('password-confirm-error')
     const resetSubmit = document.getElementById('reset-submit')
     const resetForm = document.getElementById('resetPasswordForm')
+
+    document.getElementById('logout').addEventListener('click', async () => {
+      await logout()
+      window.location.pathname = '/'
+    })
 
     window.onload = async () => {
       const { data } = await axios.get('/users/profile')

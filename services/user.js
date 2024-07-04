@@ -23,11 +23,11 @@ const login = async (email, password) => {
     }
   })
 
-  if (!user) return new Error('Wrong Credentials')
+  if (!user) throw new Error('Wrong Credentials')
 
   const valid = await verifyPassword(password, user.password)
 
-  if (!valid) return new Error('Wrong Credentials')
+  if (!valid) throw new Error('Wrong Credentials')
 
   return user
 }

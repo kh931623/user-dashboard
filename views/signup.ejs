@@ -10,6 +10,7 @@
     integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="/javascripts/password-validation.js"></script>
+  <script src="/javascripts/api.js"></script>
 </head>
 
 <body>
@@ -99,7 +100,7 @@
         payload[key] = val
       }
 
-      const res = await axios.post('/users/signup', payload)
+      await signup(payload)
       window.location.pathname = '/'
     })
   </script>
