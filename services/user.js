@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 
-const prismaClient = require('../prisma')
+const prismaClient = require('../prisma');
 
 const hashPassword = (password) => bcrypt.hash(password, 10)
 const verifyPassword = bcrypt.compare
@@ -23,11 +23,11 @@ const login = async (email, password) => {
     }
   })
 
-  if (!user) return null
+  if (!user) return new Error('Wrong Credentials')
 
   const valid = await verifyPassword(password, user.password)
 
-  if (!valid) return null
+  if (!valid) return new Error('Wrong Credentials')
 
   return user
 }
@@ -45,8 +45,34 @@ const updateName = async (user, name) => {
   return res
 }
 
+const resetPassword = async (email, oldPassword, password, passwordConfirm) => {
+  const user = await prismaClient.user.findUnique({
+    where: {
+      email,
+    }
+  })
+
+  const valid = await verifyPassword(oldPassword, user.password)
+
+  if (!valid) throw new Error('Wrong Old password')
+
+  const hashedPassword = await hashPassword(password)
+
+  const updatedUser = await prismaClient.user.update({
+    where: {
+      email,
+    },
+    data: {
+      password: hashedPassword
+    }
+  })
+
+  return updatedUser
+}
+
 module.exports = {
   register,
   login,
   updateName,
+  resetPassword,
 }

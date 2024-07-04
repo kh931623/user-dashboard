@@ -41,3 +41,16 @@ form>* {
   margin-right: 0.5rem;
   content: "✖";
 }
+
+.flex {
+  display: flex;
+  width: 100%;
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}

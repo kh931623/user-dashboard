@@ -20,4 +20,5 @@ model User {
   name       String?
   verified   Boolean  @default(false)
   created_at DateTime @default(now())
+  updated_at DateTime @default(now()) @updatedAt
 }

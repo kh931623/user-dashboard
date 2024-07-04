@@ -8,6 +8,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.7.2/axios.min.js"
     integrity="sha512-JSCFHhKDilTRRXe9ak/FJ28dcpOJxzQaCd3Xg8MyF6XFjODhy/YMCM8HW0TFDckNHWUewW+kfvhin43hKtJxAw=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="/javascripts/password-validation.js"></script>
+  <script src="/javascripts/api.js"></script>
   <title>
     <%= title %>
   </title>
@@ -15,8 +17,15 @@
 
 <body>
   <h2>Profile</h2>
-  <div>
-    <a href="/Dashboard">Dashboard</a>
+  <div class="flex">
+    <div class="flex justify-start">
+      <a href="/Dashboard">Dashboard</a>
+    </div>
+    <div class="flex justify-end">
+      <button>
+        Log out
+      </button>
+    </div>
   </div>
 
   <form id="userForm" class="border mt-3">
@@ -33,10 +42,46 @@
     </div>
   </form>
 
+  <form id="resetPasswordForm" class="mt-3 border">
+    <div>
+      <label for="old-password">Old Password</label>
+      <input type="password" name="oldPassword" id="old-password" required>
+    </div>
+    <div>
+      <label for="password">Password</label>
+      <input type="password" name="password" id="password" required>
+    </div>
+    <div class="message" id="password-error">
+      <h3>Password must contain the following:</h3>
+      <p id="lowercase" class="invalid">A <b>lowercase</b> letter</p>
+      <p id="uppercase" class="invalid">A <b>capital (uppercase)</b> letter</p>
+      <p id="digit" class="invalid">A <b>number</b></p>
+      <p id="length" class="invalid">Minimum <b>8 characters</b></p>
+      <p id="special">A special character: #?!@$%^&*-</p>
+    </div>
+    <div>
+      <label for="passwordConfirm">Password Confirm</label>
+      <input type="password" name="passwordConfirm" id="passwordConfirm" required>
+    </div>
+    <div class="message" id="password-confirm-error">
+      <p>This must have the same value as password</p>
+    </div>
+    <div>
+      <input type="submit" value="Reset Password" id="reset-submit">
+    </div>
+  </form>
+
   <script>
     const name = document.getElementById('name')
     const email = document.getElementById('email')
     const userForm = document.getElementById('userForm')
+
+    const password = document.getElementById('password')
+    const passwordConfirm = document.getElementById('passwordConfirm')
+    const passwordError = document.getElementById('password-error')
+    const passwordConfirmError = document.getElementById('password-confirm-error')
+    const resetSubmit = document.getElementById('reset-submit')
+    const resetForm = document.getElementById('resetPasswordForm')
 
     window.onload = async () => {
       const { data } = await axios.get('/users/profile')
@@ -48,10 +93,55 @@
     userForm.addEventListener('submit', async (event) => {
       event.preventDefault()
 
-      await axios.post('/users', {
-        name: name.value
-      })
+      await updateName(name.value)
+      alert('User name updated!')
     })
+
+    let isValid = false
+
+    const validate = () => {
+      hidePasswordError(passwordError)
+
+      const validConfrim = validatePasswordConfirm(password.value, passwordConfirm.value)
+      const errors = validatePassword(password.value)
+
+      togglePasswordConfirmError(validConfrim, passwordConfirmError)
+      showPasswordError(errors, passwordError)
+
+      if (validConfrim && !errors.length) {
+        isValid = true
+        resetSubmit.disabled = false
+      } else {
+        isValid = false
+        resetSubmit.disabled = true
+      }
+    }
+
+    password.addEventListener('keyup', () => {
+      validate()
+    })
+
+    passwordConfirm.addEventListener('keyup', () => {
+      validate()
+    })
+
+    resetForm.addEventListener('submit', async (event) => {
+      event.preventDefault()
+      validate()
+
+      if (!isValid) return
+
+      const formData = new FormData(resetForm)
+      const payload = {}
+
+      for (const [key, val] of formData.entries()) {
+        payload[key] = val
+      }
+
+      const res = await resetPassword(payload)
+      resetForm.reset()
+      alert('Successfully reset passowrd!')
+    }) 
   </script>
 </body>
 
