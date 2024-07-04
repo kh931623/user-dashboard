@@ -64,6 +64,10 @@ tr:nth-child(even) {
   width: 100%;
 }
 
+.flex-col {
+  flex-direction: column;
+}
+
 .justify-start {
   justify-content: flex-start;
 }

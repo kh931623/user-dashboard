@@ -27,6 +27,21 @@
     </div>
   </div>
 
+  <div class="mt-3 flex">
+    <div class="flex flex-col">
+      <label>Total Users</label>
+      <p id="total"></p>
+    </div>
+    <div class="flex flex-col">
+      <label>Active User Today</label>
+      <p id="active"></p>
+    </div>
+    <div class="flex flex-col">
+      <label>Avg Active Users Last 7 Days</label>
+      <p id="avg"></p>
+    </div>
+  </div>
+
   <table class="full-w border mt-3">
     <thead>
       <tr>
@@ -51,7 +66,11 @@
     })
 
     window.onload = async () => {
-      const users = await getDashboard()
+      const {
+        users,
+        NumberOfActiveUsersToday,
+        averageUsersWithin7Days,
+      } = await getDashboard()
       console.log(users);
 
       const rows = users.map((user) => {
@@ -71,6 +90,9 @@
       })
 
       document.getElementById('table-body').append(...rows)
+      document.getElementById('total').innerText = users.length
+      document.getElementById('active').innerText = NumberOfActiveUsersToday
+      document.getElementById('avg').innerText = averageUsersWithin7Days.toFixed(2)
     }
   </script>
 </body>

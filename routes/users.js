@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 
 const userService = require('../services/user')
+const sessionService = require('../services/session')
 const maskUser = require('../utils/mask-user')
 const prismaClient = require('../prisma')
 
@@ -91,6 +92,8 @@ router.post('/logout', apiAuthMiddleware, async (req, res) => {
 
 router.get('/dashboard', apiAuthMiddleware, async (req, res) => {
   try {
+    const sessions = await sessionService.getAllSession(req)
+    const activeUsersToday = sessionService.getTodayActiveUsers(sessions)
     const users = await prismaClient.user.findMany({
       select: {
         email: true,
@@ -99,7 +102,11 @@ router.get('/dashboard', apiAuthMiddleware, async (req, res) => {
       }
     })
 
-    res.json(users)
+    res.json({
+      users,
+      NumberOfActiveUsersToday: activeUsersToday.length,
+      averageUsersWithin7Days: sessionService.getAverageUsersWithin7Days(sessions),
+    })
   } catch (error) {
     console.error(error);
     res.status(400).send(error.message)

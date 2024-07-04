@@ -24,6 +24,7 @@ redisClient.connect().catch(console.error)
 let redisStore = new RedisStore({
   client: redisClient,
   prefix: "user-dashboard:",
+  disableTTL: true, // preserve all sessions for stats purpose
 })
 
 var app = express();
@@ -45,6 +46,9 @@ app.use(
     resave: false, // required: force lightweight session keep alive (touch)
     saveUninitialized: false, // recommended: only save session when data exists
     secret: cookieSecret,
+    cookie: {
+      maxAge: 30 * 60 * 1000 // 30 mins
+    }
   }),
 )
 
