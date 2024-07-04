@@ -13,14 +13,19 @@ router.get('/', authMiddleware, function (req, res, next) {
 
 router.get('/profile', authMiddleware, (req, res) => {
   res.render('profile', {
-    title: 'Profile'
+    title: 'Profile',
+    verified: req.session.user.verified,
   })
 })
 
 router.get('/dashboard', authMiddleware, (req, res) => {
-  res.render('dashboard', {
-    title: 'Dashboard'
-  })
+  if (req.session.user.verified) {
+    res.render('dashboard', {
+      title: 'Dashboard',
+    })
+  } else {
+    res.redirect('/')
+  }
 })
 
 router.get('/login', (req, res) => {
@@ -37,8 +42,9 @@ router.get('/verify', async (req, res) => {
   try {
     const email = await verificationService.parseToken(token)
 
-    await userService.verifyUser(email)
+    const updatedUser = await userService.verifyUser(email)
 
+    req.session.user = updatedUser
     res.redirect('/')
   } catch (error) {
     res.status(400).send('Invalid verification link!')

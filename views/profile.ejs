@@ -18,9 +18,11 @@
 <body>
   <h2>Profile</h2>
   <div class="flex">
-    <div class="flex justify-start">
-      <a href="/dashboard">Dashboard</a>
-    </div>
+    <% if (verified) { %>
+      <div class="flex justify-start">
+        <a href="/dashboard">Dashboard</a>
+      </div>
+    <% } %>
     <div class="flex justify-end">
       <button id="logout">
         Log out
