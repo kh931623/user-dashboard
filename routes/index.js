@@ -1,11 +1,18 @@
 var express = require('express');
 var router = express.Router();
 
+const authMiddleware = require('../middlewares/auth')
+
 /* GET home page. */
-router.get('/', function (req, res, next) {
-  res.render('index', { title: 'Sign In' });
-  res.redirect('/login')
+router.get('/', authMiddleware, function (req, res, next) {
+  res.redirect('/profile')
 });
+
+router.get('/profile', authMiddleware, (req, res) => {
+  res.json({
+    msg: 'Profile la'
+  })
+})
 
 router.get('/login', (req, res) => {
   res.render('login', { title: 'Sign In' });

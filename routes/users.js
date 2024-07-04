@@ -18,7 +18,14 @@ router.post('/login', async (req, res) => {
 
   const user = await userService.login(email, password)
 
-  res.json(maskUser(user))
+  if (user) {
+    req.session.user = user
+    res.json(maskUser(user))
+  } else {
+    res.status(400).json({
+      message: "Failed to login"
+    })
+  }
 })
 
 router.post('/signup', async (req, res) => {
@@ -30,8 +37,14 @@ router.post('/signup', async (req, res) => {
 
   const user = await userService.register(email, password, passwordConfirm)
 
-  res.cookie('test', 'hehehe')
-  res.json(maskUser(user))
+  if (user) {
+    req.session.user = user
+    res.json(maskUser(user))
+  } else {
+    res.status(400).json({
+      message: "Failed to sign up"
+    })
+  }
 })
 
 module.exports = router;
