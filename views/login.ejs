@@ -32,10 +32,20 @@
       <span>Don't have a account yet?</span>
       <a href="/signup">Sign up</a>
     </div>
+
+    <div class="mt-3">
+      <button id="google-login">
+        Sign In With Google
+      </button>
+    </div>
   </div>
 
   <script>
     const loginForm = document.getElementById('loginForm')
+
+    document.getElementById('google-login').addEventListener('click', () => {
+      window.location.pathname = '/auth/google'
+    })
 
     loginForm.addEventListener('submit', async (event) => {
       event.preventDefault()

@@ -48,6 +48,12 @@
       <span>Already have a account?</span>
       <a href="/login">Sign in</a>
     </div>
+
+    <div class="mt-3">
+      <button id="google-signup">
+        Sign Up With Google
+      </button>
+    </div>
   </div>
 
   <script>
@@ -60,6 +66,10 @@
     const passwordError = document.getElementById('password-error')
 
     let isValid = false
+
+    document.getElementById('google-signup').addEventListener('click', () => {
+      window.location.pathname = '/auth/google'
+    })
 
     const validate = () => {
       hidePasswordError(passwordError)

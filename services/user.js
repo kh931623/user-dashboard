@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const R = require('ramda')
 
 const prismaClient = require('../prisma');
 
@@ -91,10 +92,40 @@ const verifyUser = (email) => {
   })
 }
 
+const getEmailFromProfile = R.path([
+  'emails',
+  0,
+  'value'
+])
+
+const googleLogin = async (googleProfile) => {
+  const email = getEmailFromProfile(googleProfile)
+
+  const user = await prismaClient.user.findUnique({
+    where: {
+      email,
+    }
+  })
+
+  if (user) return user
+
+  const createdUser = await prismaClient.user.create({
+    data: {
+      email,
+      name: googleProfile.displayName,
+      password: 'N/A',
+      verified: true,
+    }
+  })
+
+  return createdUser
+}
+
 module.exports = {
   register,
   login,
   updateName,
   resetPassword,
   verifyUser,
+  googleLogin,
 }
