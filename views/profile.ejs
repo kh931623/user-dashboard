@@ -32,7 +32,14 @@
 
   <form id="userForm" class="border mt-3">
     <div>
-      <label for="Email">Email</label>
+      <label for="Email">
+        Email
+        <% if (verified) { %>
+          <span>(Verified)</span>
+        <% } else { %>
+          (Unverified)
+        <% } %>
+      </label>
       <p id="email"></p>
     </div>
     <div>
