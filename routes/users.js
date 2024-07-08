@@ -88,6 +88,7 @@ router.post('/logout', apiAuthMiddleware, async (req, res) => {
       return res.status(400).send(err.message)
     }
 
+    res.clearCookie('connect.sid')
     res.status(200).end()
   })
 })
