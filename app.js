@@ -16,7 +16,7 @@ const cookieSecret = 'cookie secret'
 
 // Initialize client.
 const redisClient = createClient({
-  url: process.env.REDIS
+  url: process.env.REDIS_URL
 })
 
 redisClient.connect().catch(console.error)
