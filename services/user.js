@@ -1,34 +1,34 @@
 const bcrypt = require('bcrypt');
-const R = require('ramda')
+const R = require('ramda');
 
 const prismaClient = require('../prisma');
 
-const hashPassword = (password) => bcrypt.hash(password, 10)
-const verifyPassword = bcrypt.compare
+const hashPassword = (password) => bcrypt.hash(password, 10);
+const verifyPassword = bcrypt.compare;
 
 const register = async (email, password, passwordConfirm) => {
-  const hashedPassword = await hashPassword(password)
+  const hashedPassword = await hashPassword(password);
 
   return await prismaClient.user.create({
     data: {
       email,
-      password: hashedPassword
-    }
-  })
-}
+      password: hashedPassword,
+    },
+  });
+};
 
 const login = async (email, password) => {
   const user = await prismaClient.user.findUnique({
     where: {
       email,
-    }
-  })
+    },
+  });
 
-  if (!user) throw new Error('Wrong Credentials')
+  if (!user) throw new Error('Wrong Credentials');
 
-  const valid = await verifyPassword(password, user.password)
+  const valid = await verifyPassword(password, user.password);
 
-  if (!valid) throw new Error('Wrong Credentials')
+  if (!valid) throw new Error('Wrong Credentials');
 
   await prismaClient.user.update({
     where: {
@@ -36,50 +36,50 @@ const login = async (email, password) => {
     },
     data: {
       login_count: user.login_count + 1,
-      last_session_at: new Date()
-    }
-  })
+      last_session_at: new Date(),
+    },
+  });
 
-  return user
-}
+  return user;
+};
 
 const updateName = async (user, name) => {
   const res = await prismaClient.user.update({
     where: {
-      email: user.email
+      email: user.email,
     },
     data: {
-      name
-    }
-  })
+      name,
+    },
+  });
 
-  return res
-}
+  return res;
+};
 
 const resetPassword = async (email, oldPassword, password, passwordConfirm) => {
   const user = await prismaClient.user.findUnique({
     where: {
       email,
-    }
-  })
+    },
+  });
 
-  const valid = await verifyPassword(oldPassword, user.password)
+  const valid = await verifyPassword(oldPassword, user.password);
 
-  if (!valid) throw new Error('Wrong Old password')
+  if (!valid) throw new Error('Wrong Old password');
 
-  const hashedPassword = await hashPassword(password)
+  const hashedPassword = await hashPassword(password);
 
   const updatedUser = await prismaClient.user.update({
     where: {
       email,
     },
     data: {
-      password: hashedPassword
-    }
-  })
+      password: hashedPassword,
+    },
+  });
 
-  return updatedUser
-}
+  return updatedUser;
+};
 
 const verifyUser = (email) => {
   return prismaClient.user.update({
@@ -87,27 +87,27 @@ const verifyUser = (email) => {
       email,
     },
     data: {
-      verified: true
-    }
-  })
-}
+      verified: true,
+    },
+  });
+};
 
 const getEmailFromProfile = R.path([
   'emails',
   0,
-  'value'
-])
+  'value',
+]);
 
 const googleLogin = async (googleProfile) => {
-  const email = getEmailFromProfile(googleProfile)
+  const email = getEmailFromProfile(googleProfile);
 
   const user = await prismaClient.user.findUnique({
     where: {
       email,
-    }
-  })
+    },
+  });
 
-  if (user) return user
+  if (user) return user;
 
   const createdUser = await prismaClient.user.create({
     data: {
@@ -115,11 +115,11 @@ const googleLogin = async (googleProfile) => {
       name: googleProfile.displayName,
       password: 'N/A',
       verified: true,
-    }
-  })
+    },
+  });
 
-  return createdUser
-}
+  return createdUser;
+};
 
 module.exports = {
   register,
@@ -128,4 +128,4 @@ module.exports = {
   resetPassword,
   verifyUser,
   googleLogin,
-}
+};

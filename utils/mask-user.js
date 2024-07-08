@@ -1,8 +1,8 @@
-const R = require('ramda')
+const R = require('ramda');
 
 const maskUser = R.omit([
   'id',
   'password',
-])
+]);
 
-module.exports = maskUser
+module.exports = maskUser;
