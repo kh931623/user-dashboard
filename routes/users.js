@@ -8,6 +8,7 @@ const maskUser = require('../utils/mask-user');
 const prismaClient = require('../prisma');
 const {
   loginValidator,
+  signupValidator,
 } = require('../validators');
 
 const apiAuthMiddleware = require('../middlewares/api-auth');
@@ -33,23 +34,31 @@ router.post(
       }
     });
 
-router.post('/signup', async (req, res) => {
-  const {
-    email,
-    password,
-    passwordConfirm,
-  } = req.body;
+router.post(
+    '/signup',
+    signupValidator,
+    validationCheckMiddleware,
+    async (req, res) => {
+      const {
+        email,
+        password,
+        passwordConfirm,
+      } = req.body;
 
-  try {
-    const user = await userService.register(email, password, passwordConfirm);
-    await verificationService.sendVerificationEmail(user.email);
-    req.session.user = user;
-    res.json(maskUser(user));
-  } catch (error) {
-    console.error(error);
-    res.status(400).send(error.message);
-  }
-});
+      try {
+        const user = await userService.register(
+            email,
+            password,
+            passwordConfirm,
+        );
+        await verificationService.sendVerificationEmail(user.email);
+        req.session.user = user;
+        res.json(maskUser(user));
+      } catch (error) {
+        console.error(error);
+        res.status(400).send(error.message);
+      }
+    });
 
 router.get('/profile', apiAuthMiddleware, async (req, res) => {
   res.json(maskUser(req.session.user));
