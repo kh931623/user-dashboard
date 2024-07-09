@@ -107,7 +107,18 @@ const googleLogin = async (googleProfile) => {
     },
   });
 
-  if (user) return user;
+  if (user) {
+    await prismaClient.user.update({
+      where: {
+        email,
+      },
+      data: {
+        login_count: user.login_count + 1,
+      },
+    });
+
+    return user;
+  }
 
   const createdUser = await prismaClient.user.create({
     data: {
