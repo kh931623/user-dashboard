@@ -10,11 +10,9 @@ passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: `${process.env.HOST}/auth/google/callback`,
-},
-async (accessToken, refreshToken, profile, cb) => {
+}, async (accessToken, refreshToken, profile, cb) => {
   cb(null, await userService.googleLogin(profile));
-},
-));
+}));
 
 router.get('/google', passport.authenticate('google', {
   scope: [
