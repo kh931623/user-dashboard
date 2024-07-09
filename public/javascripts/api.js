@@ -37,5 +37,5 @@ const signup = handleErrorDecorator(async (payload) => {
 });
 
 const getDashboard = handleErrorDecorator(async () => {
-  return axios.get('/users/dashboard').then((res) => res.data);
+  return axios.get('/dashboards').then((res) => res.data);
 });
