@@ -6,24 +6,32 @@ const sessionService = require('../services/session');
 const verificationService = require('../services/verification');
 const maskUser = require('../utils/mask-user');
 const prismaClient = require('../prisma');
+const {
+  loginValidator,
+} = require('../validators');
 
 const apiAuthMiddleware = require('../middlewares/api-auth');
+const validationCheckMiddleware = require('../middlewares/validation-check');
 
-router.post('/login', async (req, res) => {
-  const {
-    email,
-    password,
-  } = req.body;
+router.post(
+    '/login',
+    loginValidator,
+    validationCheckMiddleware,
+    async (req, res) => {
+      const {
+        email,
+        password,
+      } = req.body;
 
-  try {
-    const user = await userService.login(email, password);
-    req.session.user = user;
-    res.json(maskUser(user));
-  } catch (error) {
-    console.error(error);
-    res.status(400).send(error.message);
-  }
-});
+      try {
+        const user = await userService.login(email, password);
+        req.session.user = user;
+        res.json(maskUser(user));
+      } catch (error) {
+        console.error(error);
+        res.status(400).send(error.message);
+      }
+    });
 
 router.post('/signup', async (req, res) => {
   const {
