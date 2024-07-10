@@ -76,24 +76,24 @@ const validationCheckMiddleware = require('../middlewares/validation-check');
  *
  */
 router.post(
-  '/login',
-  loginValidator,
-  validationCheckMiddleware,
-  async (req, res) => {
-    const {
-      email,
-      password,
-    } = req.body;
+    '/login',
+    loginValidator,
+    validationCheckMiddleware,
+    async (req, res) => {
+      const {
+        email,
+        password,
+      } = req.body;
 
-    try {
-      const user = await userService.login(email, password);
-      req.session.user = user;
-      res.json(maskUser(user));
-    } catch (error) {
-      console.error(error);
-      res.status(400).send(error.message);
-    }
-  });
+      try {
+        const user = await userService.login(email, password);
+        req.session.user = user;
+        res.json(maskUser(user));
+      } catch (error) {
+        console.error(error);
+        res.status(400).send(error.message);
+      }
+    });
 
 /**
  * @openapi
@@ -133,30 +133,30 @@ router.post(
  *
  */
 router.post(
-  '/signup',
-  signupValidator,
-  validationCheckMiddleware,
-  async (req, res) => {
-    const {
-      email,
-      password,
-      passwordConfirm,
-    } = req.body;
-
-    try {
-      const user = await userService.register(
+    '/signup',
+    signupValidator,
+    validationCheckMiddleware,
+    async (req, res) => {
+      const {
         email,
         password,
         passwordConfirm,
-      );
-      await verificationService.sendVerificationEmail(user.email);
-      req.session.user = user;
-      res.json(maskUser(user));
-    } catch (error) {
-      console.error(error);
-      res.status(400).send(error.message);
-    }
-  });
+      } = req.body;
+
+      try {
+        const user = await userService.register(
+            email,
+            password,
+            passwordConfirm,
+        );
+        await verificationService.sendVerificationEmail(user.email);
+        req.session.user = user;
+        res.json(maskUser(user));
+      } catch (error) {
+        console.error(error);
+        res.status(400).send(error.message);
+      }
+    });
 
 /**
  * @openapi
@@ -203,22 +203,22 @@ router.get('/profile', apiAuthMiddleware, async (req, res) => {
  *
  */
 router.patch(
-  '/',
-  apiAuthMiddleware,
-  resetNameValidator,
-  validationCheckMiddleware,
-  async (req, res) => {
-    try {
-      const user = await userService
-        .updateName(req.session.user, req.body.name);
+    '/',
+    apiAuthMiddleware,
+    resetNameValidator,
+    validationCheckMiddleware,
+    async (req, res) => {
+      try {
+        const user = await userService
+            .updateName(req.session.user, req.body.name);
 
-      req.session.user = user;
-      res.json(maskUser(user));
-    } catch (error) {
-      console.error(error);
-      res.status(400).send(error.message);
-    }
-  });
+        req.session.user = user;
+        res.json(maskUser(user));
+      } catch (error) {
+        console.error(error);
+        res.status(400).send(error.message);
+      }
+    });
 
 /**
  * @openapi
@@ -258,32 +258,32 @@ router.patch(
  *
  */
 router.post(
-  '/reset-password',
-  apiAuthMiddleware,
-  resetPasswordValidator,
-  validationCheckMiddleware,
-  async (req, res) => {
-    const {
-      oldPassword,
-      password,
-      passwordConfirm,
-    } = req.body;
-
-    try {
-      const user = await userService.resetPassword(
-        req.session.user.email,
+    '/reset-password',
+    apiAuthMiddleware,
+    resetPasswordValidator,
+    validationCheckMiddleware,
+    async (req, res) => {
+      const {
         oldPassword,
         password,
         passwordConfirm,
-      );
+      } = req.body;
 
-      req.session.user = user;
-      res.json(maskUser(user));
-    } catch (error) {
-      console.error(error);
-      res.status(400).send(error.message);
-    }
-  });
+      try {
+        const user = await userService.resetPassword(
+            req.session.user.email,
+            oldPassword,
+            password,
+            passwordConfirm,
+        );
+
+        req.session.user = user;
+        res.json(maskUser(user));
+      } catch (error) {
+        console.error(error);
+        res.status(400).send(error.message);
+      }
+    });
 
 /**
  * @openapi
