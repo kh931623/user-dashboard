@@ -24,7 +24,7 @@ const togglePasswordConfirmError = (valid, passwordConfirmErrorElem) => {
   else passwordConfirmErrorElem.style.display = 'none';
 };
 
-const validatePassword = (password) => {
+const validatePassword = (password, oldPassword = null) => {
   const errors = [];
 
   if (password.length < 8) {
@@ -45,6 +45,10 @@ const validatePassword = (password) => {
 
   if (!password.match(/[#?!@$%^&*-]/g)) {
     errors.push('special');
+  }
+
+  if (oldPassword && password === oldPassword) {
+    errors.push('same-as-old');
   }
 
   return errors;
