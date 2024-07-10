@@ -15,6 +15,7 @@ router.get('/profile', authMiddleware, (req, res) => {
   res.render('profile', {
     title: 'Profile',
     verified: req.session.user.verified,
+    from_google: req.session.user.from_google,
   });
 });
 

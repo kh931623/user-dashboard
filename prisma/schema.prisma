@@ -20,6 +20,7 @@ model User {
   name            String?
   verified        Boolean  @default(false)
   login_count     Int      @default(1)
+  from_google     Boolean  @default(false)
   last_session_at DateTime @default(now())
   created_at      DateTime @default(now())
   updated_at      DateTime @default(now()) @updatedAt

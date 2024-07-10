@@ -126,6 +126,7 @@ const googleLogin = async (googleProfile) => {
       name: googleProfile.displayName,
       password: 'N/A',
       verified: true,
+      from_google: true,
     },
   });
 

@@ -39,6 +39,9 @@ const validationCheckMiddleware = require('../middlewares/validation-check');
  *         verified:
  *           type: boolean
  *           example: false
+ *         from_google:
+ *           type: boolean
+ *           example: false
  *         login_count:
  *           type: number
  *           example: 0
