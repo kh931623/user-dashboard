@@ -163,6 +163,8 @@ router.post(
  * /users/profile:
  *   get:
  *     summary: get user info for current authenticated user
+ *     security:
+ *       - cookieAuth: []
  *     responses:
  *       200:
  *         description: Successfully return the user's profile
@@ -181,6 +183,8 @@ router.get('/profile', apiAuthMiddleware, async (req, res) => {
  * /users:
  *   patch:
  *     summary: Change name for current authenticated user
+ *     security:
+ *       - cookieAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -225,6 +229,8 @@ router.patch(
  * /users/reset-password:
  *   post:
  *     summary: Let authenticated user to reset their password
+ *     security:
+ *       - cookieAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -290,6 +296,8 @@ router.post(
  * /users/logout:
  *   post:
  *     summary: Log out current authenticated user
+ *     security:
+ *       - cookieAuth: []
  *     responses:
  *       200:
  *         description: Successfully log out!

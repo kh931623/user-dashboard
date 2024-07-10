@@ -40,6 +40,15 @@ const options = {
       title: 'User Dashboard',
       version: '1.0.0',
     },
+    components: {
+      securitySchemes: {
+        cookieAuth: {
+          type: 'apiKey',
+          in: 'cookie', // Indicate that the apiKey is sent via cookies
+          name: 'connect.sid', // Name of the cookie holding the session ID
+        },
+      },
+    },
   },
   apis: [
     './routes/*.js',

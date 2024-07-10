@@ -31,6 +31,8 @@ const prismaClient = require('../prisma');
  * /dashboards:
  *   get:
  *     summary: Get dashboard data
+ *     security:
+ *       - cookieAuth: []
  *     responses:
  *       200:
  *         description: Successfully return dashboard data
