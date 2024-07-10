@@ -4,6 +4,7 @@ const {
 
 const {
   passwordConfirmation,
+  newPasswordCannotMatchOldPassword,
 } = require('./customs');
 
 const loginValidator = [
@@ -23,7 +24,7 @@ const resetNameValidator = [
 
 const resetPasswordValidator = [
   body('oldPassword').notEmpty().trim(),
-  body('password').notEmpty().trim(),
+  body('password').notEmpty().custom(newPasswordCannotMatchOldPassword).trim(),
   body('passwordConfirm').notEmpty().custom(passwordConfirmation).trim(),
 ];
 

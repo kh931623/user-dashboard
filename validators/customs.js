@@ -1,7 +1,14 @@
 const passwordConfirmation = (value, {req}) => {
   if (value !== req.body.password) {
-    console.log('not !');
     throw new Error('Password Confirmation must match password');
+  }
+
+  return true;
+};
+
+const newPasswordCannotMatchOldPassword = (value, {req}) => {
+  if (value === req.body.oldPassword) {
+    throw new Error('New Password can not be identical as old password');
   }
 
   return true;
@@ -9,4 +16,5 @@ const passwordConfirmation = (value, {req}) => {
 
 module.exports = {
   passwordConfirmation,
+  newPasswordCannotMatchOldPassword,
 };
