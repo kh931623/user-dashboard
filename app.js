@@ -7,6 +7,8 @@ const logger = require('morgan');
 const RedisStore = require('connect-redis').default;
 const session = require('express-session');
 const {createClient} = require('redis');
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 
 // routes
 const indexRouter = require('./routes/index');
@@ -29,6 +31,23 @@ const redisStore = new RedisStore({
   prefix: 'user-dashboard:',
   disableTTL: true, // preserve all sessions for stats purpose
 });
+
+// define open API doc
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'User Dashboard',
+      version: '1.0.0',
+    },
+  },
+  apis: [
+    './routes/*.js',
+  ],
+};
+
+// generate spec
+const openapiSpecification = swaggerJsdoc(options);
 
 const app = express();
 
@@ -60,6 +79,9 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/auth', authRouter);
 app.use('/dashboards', dashboardRouter);
+
+// Serve the Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openapiSpecification));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -14,6 +14,67 @@ const {
 const apiAuthMiddleware = require('../middlewares/api-auth');
 const validationCheckMiddleware = require('../middlewares/validation-check');
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     User:
+ *       type: object
+ *       properties:
+ *         email:
+ *           type: string
+ *           example: user@example.com
+ *         name:
+ *           type: string
+ *           example: Peter Lee
+ *         created_at:
+ *           type: string
+ *           example: 2024-07-09T18:04:53.943Z
+ *         updated_at:
+ *           type: string
+ *           example: 2024-07-09T18:04:53.943Z
+ *         last_session_at:
+ *           type: string
+ *           example: 2024-07-09T18:04:53.943Z
+ *         verified:
+ *           type: boolean
+ *           example: false
+ *         login_count:
+ *           type: number
+ *           example: 0
+ */
+
+/**
+ * @openapi
+ * /users/login:
+ *   post:
+ *     summary: Log in to the system
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: User's email address
+ *                 example: user@example.com
+ *                 required: true
+ *               password:
+ *                 type: string
+ *                 description: User's password
+ *                 example: secretPassword123
+ *                 required: true
+ *     responses:
+ *       200:
+ *         description: Successful login
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *
+ */
 router.post(
     '/login',
     loginValidator,
@@ -34,6 +95,43 @@ router.post(
       }
     });
 
+/**
+ * @openapi
+ * /users/signup:
+ *   post:
+ *     summary: Sign up a account in the system
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: User's email address
+ *                 example: user@example.com
+ *                 required: true
+ *               password:
+ *                 type: string
+ *                 description: User's password
+ *                 example: secretPassword123
+ *                 required: true
+ *               passwordConfirm:
+ *                 type: string
+ *                 description:
+ *                   User's password confirmation, must match password
+ *                 example: secretPassword123
+ *                 required: true
+ *     responses:
+ *       200:
+ *         description: Successful Signup
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *
+ */
 router.post(
     '/signup',
     signupValidator,
@@ -60,10 +158,50 @@ router.post(
       }
     });
 
+/**
+ * @openapi
+ * /users/profile:
+ *   get:
+ *     summary: get user info for current authenticated user
+ *     responses:
+ *       200:
+ *         description: Successful Signup
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *
+ */
 router.get('/profile', apiAuthMiddleware, async (req, res) => {
   res.json(maskUser(req.session.user));
 });
 
+/**
+ * @openapi
+ * /users:
+ *   patch:
+ *     summary: Change name for current authenticated user
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: User's name
+ *                 example: Peter Lee
+ *                 required: true
+ *     responses:
+ *       200:
+ *         description: Successful Signup
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *
+ */
 router.patch(
     '/',
     apiAuthMiddleware,
