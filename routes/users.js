@@ -76,24 +76,24 @@ const validationCheckMiddleware = require('../middlewares/validation-check');
  *
  */
 router.post(
-    '/login',
-    loginValidator,
-    validationCheckMiddleware,
-    async (req, res) => {
-      const {
-        email,
-        password,
-      } = req.body;
+  '/login',
+  loginValidator,
+  validationCheckMiddleware,
+  async (req, res) => {
+    const {
+      email,
+      password,
+    } = req.body;
 
-      try {
-        const user = await userService.login(email, password);
-        req.session.user = user;
-        res.json(maskUser(user));
-      } catch (error) {
-        console.error(error);
-        res.status(400).send(error.message);
-      }
-    });
+    try {
+      const user = await userService.login(email, password);
+      req.session.user = user;
+      res.json(maskUser(user));
+    } catch (error) {
+      console.error(error);
+      res.status(400).send(error.message);
+    }
+  });
 
 /**
  * @openapi
@@ -133,30 +133,30 @@ router.post(
  *
  */
 router.post(
-    '/signup',
-    signupValidator,
-    validationCheckMiddleware,
-    async (req, res) => {
-      const {
+  '/signup',
+  signupValidator,
+  validationCheckMiddleware,
+  async (req, res) => {
+    const {
+      email,
+      password,
+      passwordConfirm,
+    } = req.body;
+
+    try {
+      const user = await userService.register(
         email,
         password,
         passwordConfirm,
-      } = req.body;
-
-      try {
-        const user = await userService.register(
-            email,
-            password,
-            passwordConfirm,
-        );
-        await verificationService.sendVerificationEmail(user.email);
-        req.session.user = user;
-        res.json(maskUser(user));
-      } catch (error) {
-        console.error(error);
-        res.status(400).send(error.message);
-      }
-    });
+      );
+      await verificationService.sendVerificationEmail(user.email);
+      req.session.user = user;
+      res.json(maskUser(user));
+    } catch (error) {
+      console.error(error);
+      res.status(400).send(error.message);
+    }
+  });
 
 /**
  * @openapi
@@ -165,7 +165,7 @@ router.post(
  *     summary: get user info for current authenticated user
  *     responses:
  *       200:
- *         description: Successful Signup
+ *         description: Successfully return the user's profile
  *         content:
  *           application/json:
  *             schema:
@@ -195,7 +195,7 @@ router.get('/profile', apiAuthMiddleware, async (req, res) => {
  *                 required: true
  *     responses:
  *       200:
- *         description: Successful Signup
+ *         description: Successfully changed user's name
  *         content:
  *           application/json:
  *             schema:
@@ -203,51 +203,97 @@ router.get('/profile', apiAuthMiddleware, async (req, res) => {
  *
  */
 router.patch(
-    '/',
-    apiAuthMiddleware,
-    resetNameValidator,
-    validationCheckMiddleware,
-    async (req, res) => {
-      try {
-        const user = await userService
-            .updateName(req.session.user, req.body.name);
+  '/',
+  apiAuthMiddleware,
+  resetNameValidator,
+  validationCheckMiddleware,
+  async (req, res) => {
+    try {
+      const user = await userService
+        .updateName(req.session.user, req.body.name);
 
-        req.session.user = user;
-        res.json(maskUser(user));
-      } catch (error) {
-        console.error(error);
-        res.status(400).send(error.message);
-      }
-    });
+      req.session.user = user;
+      res.json(maskUser(user));
+    } catch (error) {
+      console.error(error);
+      res.status(400).send(error.message);
+    }
+  });
 
+/**
+ * @openapi
+ * /users/reset-password:
+ *   post:
+ *     summary: Let authenticated user to reset their password
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               oldPassword:
+ *                 type: string
+ *                 description: User's old password
+ *                 example: oldPassword
+ *                 required: true
+ *               password:
+ *                 type: string
+ *                 description: User's new password
+ *                 example: secretPassword123
+ *                 required: true
+ *               passwordConfirm:
+ *                 type: string
+ *                 description:
+ *                   User's new password confirmation, must match password
+ *                 example: secretPassword123
+ *                 required: true
+ *     responses:
+ *       200:
+ *         description: Successfully reset password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/User'
+ *
+ */
 router.post(
-    '/reset-password',
-    apiAuthMiddleware,
-    resetPasswordValidator,
-    validationCheckMiddleware,
-    async (req, res) => {
-      const {
+  '/reset-password',
+  apiAuthMiddleware,
+  resetPasswordValidator,
+  validationCheckMiddleware,
+  async (req, res) => {
+    const {
+      oldPassword,
+      password,
+      passwordConfirm,
+    } = req.body;
+
+    try {
+      const user = await userService.resetPassword(
+        req.session.user.email,
         oldPassword,
         password,
         passwordConfirm,
-      } = req.body;
+      );
 
-      try {
-        const user = await userService.resetPassword(
-            req.session.user.email,
-            oldPassword,
-            password,
-            passwordConfirm,
-        );
+      req.session.user = user;
+      res.json(maskUser(user));
+    } catch (error) {
+      console.error(error);
+      res.status(400).send(error.message);
+    }
+  });
 
-        req.session.user = user;
-        res.json(maskUser(user));
-      } catch (error) {
-        console.error(error);
-        res.status(400).send(error.message);
-      }
-    });
-
+/**
+ * @openapi
+ * /users/logout:
+ *   post:
+ *     summary: Log out current authenticated user
+ *     responses:
+ *       200:
+ *         description: Successfully log out!
+ */
 router.post('/logout', apiAuthMiddleware, async (req, res) => {
   req.session.destroy((err) => {
     if (err) {
@@ -255,7 +301,7 @@ router.post('/logout', apiAuthMiddleware, async (req, res) => {
     }
 
     res.clearCookie('connect.sid');
-    res.status(200).end();
+    res.status(200).send('Successfully log out!');
   });
 });
 
