@@ -1,5 +1,9 @@
 A simple Express App that provide user signup/login & dashboard features.
 
+## Project Concepts
+- Express Backend
+- EJS front-end directly served from express
+
 ## Prerequisite
 - node v20.x
 - docker/docker-compose
