@@ -6,7 +6,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const RedisStore = require('connect-redis').default;
 const session = require('express-session');
-const {createClient} = require('redis');
+const Redis = require('ioredis');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
@@ -18,16 +18,12 @@ const dashboardRouter = require('./routes/dashboard');
 
 const cookieSecret = 'cookie secret';
 
-// Initialize client.
-const redisClient = createClient({
-  url: process.env.REDIS_URL,
-});
-
-redisClient.connect().catch(console.error);
+// init redis client
+const redis = new Redis(process.env.REDIS);
 
 // Initialize store.
 const redisStore = new RedisStore({
-  client: redisClient,
+  client: redis,
   prefix: 'user-dashboard:',
   disableTTL: true, // preserve all sessions for stats purpose
 });
