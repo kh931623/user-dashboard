@@ -19,7 +19,7 @@ const dashboardRouter = require('./routes/dashboard');
 const cookieSecret = 'cookie secret';
 
 // init redis client
-const redis = new Redis(process.env.REDIS);
+const redis = new Redis(process.env.REDIS_URL);
 
 // Initialize store.
 const redisStore = new RedisStore({
