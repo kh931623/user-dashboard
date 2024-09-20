@@ -44,6 +44,11 @@ Setup docker services
 docker-compose up -d
 ```
 
+Run database migrations
+```
+npx prisma migrate dev
+```
+
 Start the server
 ```
 npm start
